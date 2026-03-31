@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>$SHIP — Seeking Crew</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --gold:   #c9a84c;
+      --dgold:  #8a6a1f;
+      --teal:   #0d9488;
+      --ocean:  #060d18;
+      --deep:   #030912;
+      --card:   #0a1628;
+      --border: #112240;
+      --text:   #c8d6e5;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      background: var(--ocean);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── INTRO ── */
+    #intro {
+      position:fixed; inset:0;
+      background:#000;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      z-index:9999; gap:20px;
+      animation: introOut 1s ease 4.5s forwards;
+    }
+    @keyframes introOut { to{opacity:0;pointer-events:none} }
+    .intro-compass {
+      font-size:4rem;
+      animation: spin 8s linear infinite, fi 0.5s ease 0.3s both;
+    }
+    .intro-title {
+      font-family:'Cinzel',serif;
+      font-size:clamp(1.5rem,5vw,2.8rem);
+      color:var(--gold); letter-spacing:6px;
+      text-shadow:0 0 30px rgba(201,168,76,0.5);
+      animation: fi 0.6s ease 0.8s both;
+      text-align:center;
+    }
+    .intro-sub {
+      font-size:0.8rem; letter-spacing:4px; color:#333;
+      text-transform:uppercase;
+      animation: fi 0.5s ease 1.3s both;
+    }
+    .intro-bar { width:200px; height:3px; background:#111; border-radius:2px; overflow:hidden; animation: fi 0.3s ease 1.7s both; }
+    .intro-bar-fill { height:100%; background:linear-gradient(90deg,var(--gold),var(--teal)); animation: loadBar 1.5s ease 2s both; }
+    @keyframes loadBar { from{width:0} to{width:100%} }
+    @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+    @keyframes fi { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:none} }
+
+    /* ── MAIN ── */
+    #main { opacity:0; animation: fi2 1s ease 5s forwards; }
+    @keyframes fi2 { to{opacity:1} }
+
+    /* ── TICKER ── */
+    .top-ticker {
+      background:var(--deep);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:stretch; height:34px; overflow:hidden;
+    }
+    .tt-badge {
+      background:var(--gold); color:#000;
+      font-family:'Cinzel',serif;
+      font-size:0.65rem; letter-spacing:2px;
+      padding:0 16px;
+      display:flex; align-items:center;
+      flex-shrink:0; font-weight:700;
+    }
+    .tt-scroll { flex:1; overflow:hidden; display:flex; align-items:center; }
+    .tt-inner {
+      display:inline-block;
+      animation:ttick 30s linear infinite;
+      font-size:0.6rem; letter-spacing:3px; color:#333;
+      text-transform:uppercase; padding-left:40px;
+      white-space:nowrap;
+    }
+    @keyframes ttick { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+    .tt-hi { color:var(--gold); }
+    .tt-sep { margin:0 20px; color:var(--border); }
+
+    /* ── NAV ── */
+    nav {
+      display:flex; justify-content:space-between; align-items:center;
+      padding:18px 60px;
+      background:rgba(6,13,24,0.95);
+      backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      position:sticky; top:0; z-index:100;
+    }
+    .nav-logo {
+      font-family:'Cinzel',serif;
+      font-size:1.2rem; letter-spacing:4px; color:var(--gold);
+    }
+    .nav-links { display:flex; gap:28px; list-style:none; }
+    .nav-links a { color:#445; text-decoration:none; font-size:0.8rem; letter-spacing:2px; text-transform:uppercase; transition:color 0.2s; }
+    .nav-links a:hover { color:var(--gold); }
+    .nav-cta {
+      background:var(--gold); color:#000;
+      font-family:'Cinzel',serif; font-weight:700;
+      font-size:0.7rem; padding:10px 22px; border-radius:4px;
+      text-decoration:none; letter-spacing:2px;
+      transition:transform 0.2s, box-shadow 0.2s;
+    }
+    .nav-cta:hover { transform:translateY(-2px); box-shadow:0 0 20px rgba(201,168,76,0.4); }
+
+    /* ── HERO ── */
+    .hero {
+      position:relative; min-height:95vh;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:flex-end;
+      overflow:hidden; padding-bottom:60px;
+    }
+    .hero-bg {
+      position:absolute; inset:0;
+      background-image: url('assets/ship.jpg');
+      background-size:cover; background-position:center 30%;
+      filter:brightness(0.45) saturate(0.8);
+    }
+    .hero-bg::after {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(to bottom, rgba(6,13,24,0.2) 0%, rgba(6,13,24,0) 30%, rgba(6,13,24,0.7) 70%, rgba(6,13,24,1) 100%);
+    }
+    .hero-content {
+      position:relative; z-index:1;
+      text-align:center; padding:0 20px;
+    }
+    .hero-tag {
+      display:inline-flex; align-items:center; gap:8px;
+      border:1px solid rgba(201,168,76,0.3);
+      background:rgba(201,168,76,0.06);
+      color:var(--gold); font-size:0.7rem; letter-spacing:3px;
+      padding:6px 16px; border-radius:20px; text-transform:uppercase;
+      margin-bottom:24px;
+    }
+    .hero-tag .anchor { font-size:0.9rem; }
+    .hero-h1 {
+      font-family:'Cinzel',serif;
+      font-size:clamp(2.5rem,8vw,6rem);
+      letter-spacing:6px; line-height:1.1;
+      color:#fff; margin-bottom:10px;
+    }
+    .hero-h1 span { color:var(--gold); }
+    .hero-h2 {
+      font-family:'Cinzel',serif;
+      font-size:clamp(0.9rem,2vw,1.4rem);
+      letter-spacing:8px; color:#445;
+      margin-bottom:28px; text-transform:uppercase;
+    }
+    .hero-desc {
+      font-size:1rem; color:#6a8aaa; max-width:520px;
+      margin:0 auto 36px; line-height:1.9;
+    }
+    .hero-desc strong { color:#aaa; }
+    .hero-btns { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+    .btn-gold {
+      background:var(--gold); color:#000;
+      font-family:'Cinzel',serif; font-weight:700;
+      font-size:0.8rem; padding:14px 32px; border-radius:4px;
+      text-decoration:none; letter-spacing:2px;
+      transition:transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-gold:hover { transform:translateY(-2px); box-shadow:0 0 24px rgba(201,168,76,0.4); }
+    .btn-ghost {
+      color:var(--gold); font-size:0.8rem;
+      font-family:'Cinzel',serif; font-weight:700;
+      padding:14px 32px; border-radius:4px;
+      border:1px solid rgba(201,168,76,0.3);
+      text-decoration:none; letter-spacing:2px;
+      transition:background 0.2s;
+    }
+    .btn-ghost:hover { background:rgba(201,168,76,0.07); }
+
+    /* ── WAVE DIVIDER ── */
+    .wave-sep {
+      width:100%; overflow:hidden; line-height:0;
+      background:var(--ocean);
+    }
+
+    /* ── RUNNING LINE ── */
+    .run-line {
+      overflow:hidden; white-space:nowrap;
+      padding:14px 0;
+      background:var(--card);
+      border-top:1px solid var(--border);
+      border-bottom:1px solid var(--border);
+    }
+    .rl-inner {
+      display:inline-block;
+      animation:rltick 25s linear infinite;
+      font-size:0.65rem; letter-spacing:4px; color:#1a2e4a;
+      text-transform:uppercase;
+    }
+    @keyframes rltick { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+    .rl-hi { color:var(--gold); }
+    .rl-sep { margin:0 22px; color:var(--border); }
+
+    /* ── CREW MANIFEST — THE MAIN FEATURE ── */
+    .crew-section {
+      max-width:1200px; margin:0 auto; padding:80px 40px;
+    }
+    .section-label {
+      font-size:0.65rem; letter-spacing:4px; color:var(--teal);
+      text-transform:uppercase; margin-bottom:12px;
+      font-family:'Cinzel',serif;
+    }
+    .crew-section h2 {
+      font-family:'Cinzel',serif;
+      font-size:clamp(1.5rem,4vw,2.8rem);
+      letter-spacing:4px; margin-bottom:12px; color:#fff;
+    }
+    .crew-section h2 em { color:var(--gold); font-style:normal; }
+    .crew-section .sub {
+      font-size:0.9rem; color:#445; margin-bottom:48px; line-height:1.7;
+    }
+
+    /* SHIP CANVAS CONTAINER */
+    .ship-canvas-wrap {
+      position:relative;
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:16px;
+      overflow:hidden;
+      padding:0;
+    }
+    .ship-scene {
+      position:relative;
+      height:420px;
+    }
+
+    /* Sky */
+    .sky {
+      position:absolute; inset:0;
+      background:linear-gradient(180deg, #020810 0%, #050e20 40%, #071428 100%);
+    }
+    /* Stars */
+    .stars { position:absolute; inset:0; pointer-events:none; }
+
+    /* Ocean waves */
+    .ocean-layer {
+      position:absolute; bottom:0; left:0; right:0; height:160px;
+    }
+    .wave {
+      position:absolute; width:200%; height:100%;
+      background:linear-gradient(180deg, transparent, #061830 30%, #040e20 100%);
+      border-radius:40% 60% 0 0 / 20px 20px 0 0;
+    }
+    .wave1 { animation:waveMove 6s ease-in-out infinite; opacity:0.8; bottom:0; }
+    .wave2 { animation:waveMove 8s ease-in-out infinite reverse; opacity:0.5; bottom:10px; }
+    .wave3 { animation:waveMove 10s ease-in-out infinite; opacity:0.3; bottom:20px; }
+    @keyframes waveMove {
+      0%,100% { transform:translateX(0) scaleY(1); }
+      50%      { transform:translateX(-5%) scaleY(1.1); }
+    }
+
+    /* THE SHIP SVG */
+    .ship-svg-wrap {
+      position:absolute;
+      bottom:70px;
+      left:50%;
+      transform:translateX(-50%);
+      width:580px;
+      animation:shipBob 5s ease-in-out infinite;
+    }
+    @keyframes shipBob {
+      0%,100% { transform:translateX(-50%) translateY(0) rotate(-0.5deg); }
+      50%      { transform:translateX(-50%) translateY(-8px) rotate(0.5deg); }
+    }
+
+    /* CREW FIGURES on deck */
+    #crew-deck {
+      position:absolute;
+      bottom:152px; /* on the deck */
+      left:50%;
+      transform:translateX(-50%);
+      width:580px;
+      display:flex;
+      align-items:flex-end;
+      justify-content:center;
+      gap:6px;
+      z-index:10;
+    }
+
+    /* Stick figure styles */
+    .figure {
+      display:flex; flex-direction:column; align-items:center;
+      cursor:pointer; position:relative;
+      animation:figureIn 0.5s cubic-bezier(.34,1.56,.64,1) both;
+      transition:transform 0.2s;
+    }
+    .figure:hover { transform:translateY(-4px); z-index:20; }
+    @keyframes figureIn {
+      from{opacity:0;transform:translateY(20px) scale(0.5)}
+      to{opacity:1;transform:translateY(0) scale(1)}
+    }
+
+    /* Tooltip */
+    .fig-tooltip {
+      position:absolute;
+      bottom:calc(100% + 8px);
+      left:50%; transform:translateX(-50%);
+      background:rgba(6,13,24,0.95);
+      border:1px solid var(--border);
+      border-radius:6px;
+      padding:8px 12px;
+      font-size:0.65rem; color:var(--text);
+      white-space:nowrap;
+      pointer-events:none;
+      opacity:0; transition:opacity 0.15s;
+      z-index:30;
+    }
+    .figure:hover .fig-tooltip { opacity:1; }
+    .fig-wallet { color:var(--gold); font-family:monospace; }
+    .fig-amount { color:var(--teal); margin-top:2px; }
+
+    /* Tier badge */
+    .fig-badge {
+      font-size:0.5rem; letter-spacing:1px;
+      padding:1px 4px; border-radius:3px;
+      margin-bottom:2px; font-weight:700;
+    }
+    .badge-whale  { background:#1a3a5c; color:#5bc8ff; }
+    .badge-shark  { background:#1a2e1a; color:#5bff8a; }
+    .badge-fish   { background:#2a1a0a; color:var(--gold); }
+    .badge-shrimp { background:#1a1a2a; color:#8888ff; }
+
+    /* Info bar below ship */
+    .crew-info {
+      padding:20px 28px;
+      border-top:1px solid var(--border);
+      display:flex; gap:32px; align-items:center; flex-wrap:wrap;
+    }
+    .ci-item { text-align:center; }
+    .ci-num {
+      font-family:'Cinzel',serif; font-size:1.4rem;
+      color:var(--gold); display:block;
+    }
+    .ci-lbl { font-size:0.65rem; color:#445; letter-spacing:2px; text-transform:uppercase; }
+    .ci-divider { flex:1; height:1px; background:var(--border); }
+
+    .join-cta {
+      display:flex; align-items:center; gap:14px;
+      margin-left:auto;
+    }
+    .join-text { font-size:0.8rem; color:#445; }
+    .join-text strong { color:var(--gold); }
+
+    /* Legend */
+    .crew-legend {
+      display:flex; gap:20px; flex-wrap:wrap; margin-top:24px;
+    }
+    .legend-item {
+      display:flex; align-items:center; gap:8px;
+      font-size:0.75rem; color:#445;
+    }
+    .legend-item svg { flex-shrink:0; }
+
+    /* ── LORE ── */
+    .lore-wrap {
+      max-width:1100px; margin:0 auto;
+      padding:0 40px 80px;
+      display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center;
+    }
+    .lore-left h2 {
+      font-family:'Cinzel',serif;
+      font-size:clamp(1.5rem,3vw,2.4rem);
+      letter-spacing:3px; margin-bottom:20px; color:#fff; line-height:1.3;
+    }
+    .lore-left h2 em { color:var(--gold); font-style:normal; }
+    .lore-left p { font-size:0.9rem; color:#445; line-height:2; }
+    .lore-left p strong { color:#aaa; }
+    .lore-right { display:flex; flex-direction:column; gap:16px; }
+    .manifest-item {
+      background:var(--card); border:1px solid var(--border);
+      border-radius:10px; padding:20px 22px;
+      display:flex; gap:16px; align-items:flex-start;
+      transition:border-color 0.2s;
+    }
+    .manifest-item:hover { border-color:var(--gold); }
+    .mi-icon { font-size:1.6rem; flex-shrink:0; }
+    .mi-title { font-family:'Cinzel',serif; font-size:0.85rem; color:var(--gold); margin-bottom:4px; }
+    .mi-text { font-size:0.82rem; color:#445; line-height:1.6; }
+
+    /* ── STATS ── */
+    .stats-row {
+      border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+    }
+    .stats {
+      display:grid; grid-template-columns:repeat(4,1fr);
+      max-width:1100px; margin:0 auto;
+    }
+    .stat {
+      padding:40px 24px; text-align:center;
+      border-right:1px solid var(--border);
+      transition:background 0.2s;
+    }
+    .stat:last-child { border-right:none; }
+    .stat:hover { background:var(--card); }
+    .snum {
+      font-family:'Cinzel',serif; font-size:2rem;
+      color:var(--gold); margin-bottom:8px;
+    }
+    .slbl { font-size:0.65rem; color:#334; letter-spacing:3px; text-transform:uppercase; }
+
+    /* ── HOW TO JOIN ── */
+    .htj { max-width:1100px; margin:0 auto; padding:80px 40px; }
+    .htj h2 {
+      font-family:'Cinzel',serif;
+      font-size:clamp(1.3rem,3vw,2rem);
+      letter-spacing:4px; margin-bottom:40px; color:#fff;
+    }
+    .htj h2 em { color:var(--gold); font-style:normal; }
+    .steps {
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:16px;
+    }
+    .step {
+      background:var(--card); border:1px solid var(--border);
+      border-radius:10px; padding:28px 22px;
+      transition:transform 0.2s, border-color 0.2s;
+    }
+    .step:hover { transform:translateY(-4px); border-color:var(--gold); }
+    .sn { font-family:'Cinzel',serif; font-size:2.5rem; color:rgba(201,168,76,0.1); margin-bottom:12px; }
+    .step h3 { font-size:0.85rem; color:var(--gold); margin-bottom:8px; font-family:'Cinzel',serif; letter-spacing:1px; }
+    .step p { font-size:0.82rem; color:#445; line-height:1.7; }
+
+    /* ── CA ── */
+    .ca-wrap { max-width:1100px; margin:0 auto; padding:0 40px 80px; }
+    .ca-box {
+      background:var(--card); border:1px solid rgba(201,168,76,0.2);
+      border-radius:10px; padding:26px 30px;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:16px; flex-wrap:wrap;
+    }
+    .calbl { font-size:0.62rem; color:#445; letter-spacing:2px; margin-bottom:4px; }
+    .caaddr { font-family:monospace; font-size:0.9rem; color:var(--gold); word-break:break-all; }
+    .cabtn {
+      background:var(--gold); color:#000; border:none;
+      font-family:'Cinzel',serif; font-weight:700;
+      font-size:0.7rem; padding:12px 22px; border-radius:4px;
+      cursor:pointer; white-space:nowrap; letter-spacing:2px;
+      transition:transform 0.15s;
+    }
+    .cabtn:hover { transform:scale(1.05); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top:1px solid var(--border);
+      padding:32px 60px;
+      display:flex; align-items:center; justify-content:space-between;
+      flex-wrap:wrap; gap:16px;
+    }
+    .flogo { font-family:'Cinzel',serif; font-size:1rem; color:#1a2a3a; letter-spacing:4px; }
+    .flinks { display:flex; gap:24px; }
+    .flinks a { color:#334; text-decoration:none; font-size:0.78rem; transition:color 0.2s; }
+    .flinks a:hover { color:var(--gold); }
+
+    @media(max-width:900px){
+      nav { padding:16px 20px; }
+      .nav-links { display:none; }
+      .lore-wrap { grid-template-columns:1fr; padding:0 20px 60px; }
+      .stats { grid-template-columns:repeat(2,1fr); }
+      .htj { padding:60px 20px; }
+      .ca-wrap { padding:0 20px 60px; }
+      footer { padding:24px 20px; }
+      .crew-section { padding:60px 20px; }
+      .ship-svg-wrap, #crew-deck { width:340px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div id="intro">
+  <div class="intro-compass">⚓</div>
+  <div class="intro-title">SEEKING CREW</div>
+  <div class="intro-sub">$SHIP — All hands on deck</div>
+  <div class="intro-bar"><div class="intro-bar-fill"></div></div>
+</div>
+
+<div id="main">
+
+  <!-- TICKER -->
+  <div class="top-ticker">
+    <div class="tt-badge">$SHIP</div>
+    <div class="tt-scroll">
+      <span class="tt-inner">
+        <span class="tt-hi">SEEKING CREW</span><span class="tt-sep">⚓</span>
+        ALL HANDS ON DECK <span class="tt-sep">⚓</span>
+        <span class="tt-hi">$SHIP ON SOLANA</span> <span class="tt-sep">⚓</span>
+        BUY = JOIN THE CREW <span class="tt-sep">⚓</span>
+        <span class="tt-hi">EVERY HOLDER ON BOARD</span> <span class="tt-sep">⚓</span>
+        FAIR WINDS AHEAD <span class="tt-sep">⚓</span>
+        <span class="tt-hi">SEEKING CREW</span><span class="tt-sep">⚓</span>
+        ALL HANDS ON DECK <span class="tt-sep">⚓</span>
+        <span class="tt-hi">$SHIP ON SOLANA</span> <span class="tt-sep">⚓</span>
+        BUY = JOIN THE CREW <span class="tt-sep">⚓</span>
+        <span class="tt-hi">EVERY HOLDER ON BOARD</span> <span class="tt-sep">⚓</span>
+        FAIR WINDS AHEAD <span class="tt-sep">⚓</span>
+      </span>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">⚓ $SHIP</div>
+    <ul class="nav-links">
+      <li><a href="#crew">The Crew</a></li>
+      <li><a href="#lore">Lore</a></li>
+      <li><a href="#join">Board Ship</a></li>
+    </ul>
+    <a href="#join" class="nav-cta">⚓ Join Crew</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="hero-tag"><span class="anchor">⚓</span> Now Recruiting</div>
+      <h1 class="hero-h1">SEEKING<br/><span>CREW</span></h1>
+      <div class="hero-h2">$SHIP — All Hands on Deck</div>
+      <p class="hero-desc">
+        The ship sets sail. <strong>Every holder is crew.</strong><br/>
+        Buy $SHIP and your wallet joins the vessel.<br/>
+        The bigger your hold — the bigger your place on deck.
+      </p>
+      <div class="hero-btns">
+        <a href="#join" class="btn-gold">⚓ Board the Ship</a>
+        <a href="#crew" class="btn-ghost">See the Crew</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- RUNNING LINE -->
+  <div class="run-line">
+    <span class="rl-inner">
+      <span class="rl-hi">⚓ $SHIP</span><span class="rl-sep">—</span>
+      BUY AND JOIN THE CREW <span class="rl-sep">—</span>
+      <span class="rl-hi">BIGGER HOLDER = BIGGER FIGURE</span> <span class="rl-sep">—</span>
+      ALL ABOARD <span class="rl-sep">—</span>
+      <span class="rl-hi">SEEKING CREW</span> <span class="rl-sep">—</span>
+      SOLANA <span class="rl-sep">—</span>
+      <span class="rl-hi">⚓ $SHIP</span><span class="rl-sep">—</span>
+      BUY AND JOIN THE CREW <span class="rl-sep">—</span>
+      <span class="rl-hi">BIGGER HOLDER = BIGGER FIGURE</span> <span class="rl-sep">—</span>
+      ALL ABOARD <span class="rl-sep">—</span>
+      <span class="rl-hi">SEEKING CREW</span> <span class="rl-sep">—</span>
+      SOLANA <span class="rl-sep">—</span>
+    </span>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stats">
+      <div class="stat"><div class="snum">1B</div><div class="slbl">Supply</div></div>
+      <div class="stat"><div class="snum">0%</div><div class="slbl">Tax</div></div>
+      <div class="stat"><div class="snum">🔥</div><div class="slbl">LP Burned</div></div>
+      <div class="stat"><div class="snum">🔒</div><div class="slbl">Renounced</div></div>
+    </div>
+  </div>
+
+  <!-- ⚓ CREW MANIFEST — THE MAIN FEATURE -->
+  <section class="crew-section" id="crew">
+    <div class="section-label">⚓ Crew Manifest</div>
+    <h2>Every Holder <em>On Board.</em></h2>
+    <p class="sub">Buy $SHIP → your wallet appears on deck as a crew member.<br/>
+    The more you hold, the bigger your figure. Whales get the biggest spots.</p>
+
+    <div class="ship-canvas-wrap">
+      <div class="ship-scene">
+        <!-- Sky -->
+        <div class="sky">
+          <svg class="stars" xmlns="http://www.w3.org/2000/svg">
+            <!-- Stars generated via JS -->
+          </svg>
+        </div>
+
+        <!-- Moon -->
+        <div style="position:absolute;top:30px;right:120px;width:50px;height:50px;background:radial-gradient(circle,#c9a84c,#8a6a1f);border-radius:50%;box-shadow:0 0 40px rgba(201,168,76,0.3);opacity:0.7;"></div>
+
+        <!-- THE SHIP — SVG illustration -->
+        <div class="ship-svg-wrap">
+          <svg viewBox="0 0 580 280" xmlns="http://www.w3.org/2000/svg" fill="none">
+            <!-- Hull -->
+            <path d="M60 180 L80 220 L500 220 L520 180 Z" fill="#1a0d05" stroke="#3a2010" stroke-width="2"/>
+            <path d="M80 220 Q290 240 500 220 L480 240 Q290 260 100 240 Z" fill="#120b03" stroke="#2a1508" stroke-width="1.5"/>
+            <!-- Deck -->
+            <rect x="60" y="170" width="460" height="14" rx="3" fill="#251505" stroke="#3a2010" stroke-width="1.5"/>
+            <!-- Deck planks -->
+            <line x1="120" y1="170" x2="120" y2="184" stroke="#1a0e05" stroke-width="1"/>
+            <line x1="180" y1="170" x2="180" y2="184" stroke="#1a0e05" stroke-width="1"/>
+            <line x1="240" y1="170" x2="240" y2="184" stroke="#1a0e05" stroke-width="1"/>
+            <line x1="300" y1="170" x2="300" y2="184" stroke="#1a0e05" stroke-width="1"/>
+            <line x1="360" y1="170" x2="360" y2="184" stroke="#1a0e05" stroke-width="1"/>
+            <line x1="420" y1="170" x2="420" y2="184" stroke="#1a0e05" stroke-width="1"/>
+            <!-- Poop deck / stern -->
+            <rect x="400" y="145" width="120" height="28" rx="3" fill="#1d0e04" stroke="#3a2010" stroke-width="1.5"/>
+            <!-- Railing posts -->
+            <line x1="100" y1="155" x2="100" y2="170" stroke="#3a2010" stroke-width="2"/>
+            <line x1="150" y1="155" x2="150" y2="170" stroke="#3a2010" stroke-width="2"/>
+            <line x1="200" y1="155" x2="200" y2="170" stroke="#3a2010" stroke-width="2"/>
+            <line x1="250" y1="155" x2="250" y2="170" stroke="#3a2010" stroke-width="2"/>
+            <line x1="300" y1="155" x2="300" y2="170" stroke="#3a2010" stroke-width="2"/>
+            <line x1="350" y1="155" x2="350" y2="170" stroke="#3a2010" stroke-width="2"/>
+            <!-- Railing bar -->
+            <line x1="95" y1="156" x2="395" y2="156" stroke="#4a3020" stroke-width="2.5"/>
+            <!-- Main mast -->
+            <line x1="220" y1="20" x2="220" y2="172" stroke="#2a1508" stroke-width="5"/>
+            <!-- Fore mast -->
+            <line x1="140" y1="50" x2="140" y2="172" stroke="#2a1508" stroke-width="4"/>
+            <!-- Mizzen mast -->
+            <line x1="440" y1="100" x2="440" y2="148" stroke="#2a1508" stroke-width="3"/>
+            <!-- Main sail -->
+            <path d="M222 25 L320 60 L320 120 L222 140 Z" fill="rgba(180,160,100,0.15)" stroke="#4a3a20" stroke-width="1.5"/>
+            <path d="M222 25 L140 55 L140 115 L222 140 Z" fill="rgba(180,160,100,0.12)" stroke="#4a3a20" stroke-width="1.5"/>
+            <!-- Fore sail -->
+            <path d="M141 55 L200 70 L200 115 L141 115 Z" fill="rgba(180,160,100,0.1)" stroke="#4a3a20" stroke-width="1"/>
+            <!-- Mizzen sail -->
+            <path d="M441 102 L490 115 L490 140 L441 140 Z" fill="rgba(180,160,100,0.1)" stroke="#4a3a20" stroke-width="1"/>
+            <!-- Bowsprit -->
+            <line x1="60" y1="165" x2="120" y2="120" stroke="#2a1508" stroke-width="3"/>
+            <!-- Flags -->
+            <path d="M220 20 L250 28 L220 36 Z" fill="#c9a84c" opacity="0.8"/>
+            <path d="M140 50 L165 57 L140 64 Z" fill="#c9a84c" opacity="0.6"/>
+            <!-- Port holes -->
+            <circle cx="140" cy="200" r="7" fill="#0a0800" stroke="#3a2010" stroke-width="1.5"/>
+            <circle cx="200" cy="202" r="7" fill="#0a0800" stroke="#3a2010" stroke-width="1.5"/>
+            <circle cx="260" cy="203" r="7" fill="#0a0800" stroke="#3a2010" stroke-width="1.5"/>
+            <circle cx="320" cy="203" r="7" fill="#0a0800" stroke="#3a2010" stroke-width="1.5"/>
+            <circle cx="380" cy="202" r="7" fill="#0a0800" stroke="#3a2010" stroke-width="1.5"/>
+            <!-- Anchor rope -->
+            <path d="M85 175 Q75 195 80 215" stroke="#2a1508" stroke-width="2" stroke-dasharray="4,3"/>
+          </svg>
+        </div>
+
+        <!-- CREW DECK — stick figures here -->
+        <div id="crew-deck"></div>
+
+        <!-- Ocean waves -->
+        <div class="ocean-layer">
+          <div class="wave wave1" style="background:linear-gradient(180deg,transparent,#040e1f 40%,#020810 100%);top:0;"></div>
+          <div class="wave wave2" style="background:linear-gradient(180deg,transparent,#050d1c 50%,#030a16 100%);top:0;"></div>
+          <div class="wave wave3" style="background:linear-gradient(180deg,transparent,#061228 60%,#040e20 100%);top:0;"></div>
+        </div>
+      </div>
+
+      <!-- Info bar -->
+      <div class="crew-info">
+        <div class="ci-item">
+          <span class="ci-num" id="crew-count">0</span>
+          <span class="ci-lbl">Crew Members</span>
+        </div>
+        <div class="ci-item">
+          <span class="ci-num" id="whale-count">0</span>
+          <span class="ci-lbl">Whales 🐋</span>
+        </div>
+        <div class="ci-item">
+          <span class="ci-num" id="total-held">0</span>
+          <span class="ci-lbl">$SHIP Held</span>
+        </div>
+        <div class="ci-divider"></div>
+        <div class="join-cta">
+          <div class="join-text">Want to appear on the ship?<br/><strong>Buy $SHIP and join the crew.</strong></div>
+          <a href="#join" class="btn-gold" style="padding:10px 20px;font-size:0.7rem;">⚓ Board Now</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="crew-legend">
+      <div class="legend-item">
+        <svg width="20" height="28" viewBox="0 0 20 28"><circle cx="10" cy="5" r="4" fill="#5bc8ff" stroke="#5bc8ff"/><line x1="10" y1="9" x2="10" y2="20" stroke="#5bc8ff" stroke-width="2"/><line x1="4" y1="14" x2="16" y2="14" stroke="#5bc8ff" stroke-width="2"/><line x1="10" y1="20" x2="4" y2="28" stroke="#5bc8ff" stroke-width="2"/><line x1="10" y1="20" x2="16" y2="28" stroke="#5bc8ff" stroke-width="2"/></svg>
+        <span>Whale — Top 5% holders (biggest figures)</span>
+      </div>
+      <div class="legend-item">
+        <svg width="16" height="22" viewBox="0 0 16 22"><circle cx="8" cy="4" r="3" fill="#5bff8a" stroke="#5bff8a"/><line x1="8" y1="7" x2="8" y2="16" stroke="#5bff8a" stroke-width="1.8"/><line x1="3" y1="11" x2="13" y2="11" stroke="#5bff8a" stroke-width="1.8"/><line x1="8" y1="16" x2="3" y2="22" stroke="#5bff8a" stroke-width="1.8"/><line x1="8" y1="16" x2="13" y2="22" stroke="#5bff8a" stroke-width="1.8"/></svg>
+        <span>Shark — 1–5% holders</span>
+      </div>
+      <div class="legend-item">
+        <svg width="12" height="17" viewBox="0 0 12 17"><circle cx="6" cy="3" r="2.5" fill="#c9a84c" stroke="#c9a84c"/><line x1="6" y1="5.5" x2="6" y2="12" stroke="#c9a84c" stroke-width="1.5"/><line x1="2" y1="9" x2="10" y2="9" stroke="#c9a84c" stroke-width="1.5"/><line x1="6" y1="12" x2="2" y2="17" stroke="#c9a84c" stroke-width="1.5"/><line x1="6" y1="12" x2="10" y2="17" stroke="#c9a84c" stroke-width="1.5"/></svg>
+        <span>Fish — 0.1–1% holders</span>
+      </div>
+      <div class="legend-item">
+        <svg width="9" height="13" viewBox="0 0 9 13"><circle cx="4.5" cy="2" r="2" fill="#8888ff" stroke="#8888ff"/><line x1="4.5" y1="4" x2="4.5" y2="9" stroke="#8888ff" stroke-width="1.2"/><line x1="1" y1="6.5" x2="8" y2="6.5" stroke="#8888ff" stroke-width="1.2"/><line x1="4.5" y1="9" x2="1" y2="13" stroke="#8888ff" stroke-width="1.2"/><line x1="4.5" y1="9" x2="8" y2="13" stroke="#8888ff" stroke-width="1.2"/></svg>
+        <span>Shrimp — &lt;0.1% holders</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- LORE -->
+  <section class="lore-wrap" id="lore">
+    <div class="lore-left">
+      <div class="section-label">📜 The Manifest</div>
+      <h2>A ship is nothing<br/>without its <em>crew.</em></h2>
+      <p>
+        Every great voyage needs sailors.<br/><br/>
+        <strong>$SHIP doesn't just sell tokens.</strong> It recruits a crew. When you buy, you don't just hold a coin — you board the vessel. Your wallet appears on the ship's deck, visible to all.<br/><br/>
+        The sea is rough. The journey is long. But the crew sails together.
+      </p>
+    </div>
+    <div class="lore-right">
+      <div class="manifest-item">
+        <div class="mi-icon">🐋</div>
+        <div>
+          <div class="mi-title">Whales</div>
+          <div class="mi-text">The biggest holders command the tallest figures on deck. Everyone can see who runs this ship.</div>
+        </div>
+      </div>
+      <div class="manifest-item">
+        <div class="mi-icon">🗺️</div>
+        <div>
+          <div class="mi-title">Live Crew Map</div>
+          <div class="mi-text">Every wallet that buys $SHIP appears on the ship in real time. The deck fills up as the crew grows.</div>
+        </div>
+      </div>
+      <div class="manifest-item">
+        <div class="mi-icon">⚓</div>
+        <div>
+          <div class="mi-title">All Aboard</div>
+          <div class="mi-text">No wallet too small. A shrimp still gets a spot on deck. Everyone sails together.</div>
+        </div>
+      </div>
+      <div class="manifest-item">
+        <div class="mi-icon">🌊</div>
+        <div>
+          <div class="mi-title">Fair Winds</div>
+          <div class="mi-text">0% tax. Renounced contract. LP burned. The ship sails with nothing to hide.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW TO JOIN -->
+  <div class="htj" id="join">
+    <div class="section-label">⚓ All Aboard</div>
+    <h2>How to <em>Join the Crew</em></h2>
+    <div class="steps">
+      <div class="step">
+        <div class="sn">I</div>
+        <h3>Get Phantom</h3>
+        <p>Download Phantom wallet. Back up your seed phrase. This is your sailor's ID — don't lose it.</p>
+      </div>
+      <div class="step">
+        <div class="sn">II</div>
+        <h3>Get SOL</h3>
+        <p>Buy Solana on any exchange. Send it to Phantom. That's your boarding fee for the vessel.</p>
+      </div>
+      <div class="step">
+        <div class="sn">III</div>
+        <h3>Swap on Jupiter</h3>
+        <p>Go to jup.ag, paste the $SHIP contract address and swap. Simple as signing the manifest.</p>
+      </div>
+      <div class="step">
+        <div class="sn">IV</div>
+        <h3>Board the Ship ⚓</h3>
+        <p>Your wallet appears on deck. The bigger you buy, the bigger your figure. Welcome aboard, sailor.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CA -->
+  <div class="ca-wrap">
+    <div class="ca-box">
+      <div>
+        <div class="calbl">Contract Address</div>
+        <div class="caaddr" id="ca-text">TBA — Setting Sail Soon</div>
+      </div>
+      <button class="cabtn" onclick="copyCA()">Copy</button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="flogo">⚓ $SHIP</div>
+    <div class="flinks">
+      <a href="#">Twitter / X</a>
+      <a href="#">Telegram</a>
+      <a href="#">Dexscreener</a>
+      <a href="#">Jupiter</a>
+    </div>
+    <div style="color:#1a2a3a;font-size:0.72rem;">Not financial advice. DYOR. Fair winds.</div>
+  </footer>
+
+</div>
+
+<script>
+// ── SIMULATED CREW DATA ──
+// In production: fetch from Solana RPC
+const DEMO_CREW = [
+  { wallet:"7xKp...whale1", amount:45000000, tier:"whale" },
+  { wallet:"3mNq...whale2", amount:38000000, tier:"whale" },
+  { wallet:"9aRt...whale3", amount:31000000, tier:"whale" },
+  { wallet:"2bVc...shark1", amount:18000000, tier:"shark" },
+  { wallet:"5cWd...shark2", amount:12000000, tier:"shark" },
+  { wallet:"8dXe...shark3", amount:9500000,  tier:"shark" },
+  { wallet:"1eYf...fish1",  amount:4200000,  tier:"fish"  },
+  { wallet:"4fZg...fish2",  amount:3100000,  tier:"fish"  },
+  { wallet:"6gAh...fish3",  amount:2400000,  tier:"fish"  },
+  { wallet:"0hBi...fish4",  amount:1800000,  tier:"fish"  },
+  { wallet:"2iCj...shrimp1",amount:800000,   tier:"shrimp"},
+  { wallet:"3jDk...shrimp2",amount:500000,   tier:"shrimp"},
+  { wallet:"4kEl...shrimp3",amount:300000,   tier:"shrimp"},
+  { wallet:"5lFm...shrimp4",amount:200000,   tier:"shrimp"},
+  { wallet:"6mGn...shrimp5",amount:150000,   tier:"shrimp"},
+  { wallet:"7nHo...shrimp6",amount:100000,   tier:"shrimp"},
+];
+
+const TIER_CONFIG = {
+  whale:  { scale:1,    color:"#5bc8ff", bodyH:20, label:"🐋 Whale" },
+  shark:  { scale:0.75, color:"#5bff8a", bodyH:16, label:"🦈 Shark" },
+  fish:   { scale:0.55, color:"#c9a84c", bodyH:12, label:"🐟 Fish"  },
+  shrimp: { scale:0.4,  color:"#8888ff", bodyH:9,  label:"🦐 Shrimp"},
+};
+
+function makeFigureSVG(tier, color) {
+  const t = TIER_CONFIG[tier];
+  const s = t.scale;
+  const w = Math.round(20*s), h = Math.round(36*s);
+  const r = Math.round(5*s), bh = t.bodyH;
+  const ry = Math.round(r), by = Math.round(r*2+2), ey = Math.round(r*2+2+bh);
+  return `<svg width="${w}" height="${h}" viewBox="0 0 20 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="10" cy="${r+1}" r="${r}" fill="${color}" stroke="${color}" stroke-width="0.5"/>
+    <line x1="10" y1="${by}" x2="10" y2="${ey}" stroke="${color}" stroke-width="${Math.max(1.5,2*s)}"/>
+    <line x1="${Math.round(4*s)}" y1="${Math.round(by+bh*0.4)}" x2="${Math.round(16*s)}" y2="${Math.round(by+bh*0.4)}" stroke="${color}" stroke-width="${Math.max(1.2,1.8*s)}"/>
+    <line x1="10" y1="${ey}" x2="${Math.round(4*s)}" y2="${Math.round(ey+10*s)}" stroke="${color}" stroke-width="${Math.max(1.2,1.8*s)}"/>
+    <line x1="10" y1="${ey}" x2="${Math.round(16*s)}" y2="${Math.round(ey+10*s)}" stroke="${color}" stroke-width="${Math.max(1.2,1.8*s)}"/>
+  </svg>`;
+}
+
+function formatAmount(n) {
+  if (n >= 1000000) return (n/1000000).toFixed(1)+'M';
+  if (n >= 1000) return (n/1000).toFixed(0)+'K';
+  return n.toString();
+}
+
+function buildCrew() {
+  const deck = document.getElementById('crew-deck');
+  deck.innerHTML = '';
+
+  let whaleCount = 0, totalHeld = 0;
+
+  DEMO_CREW.forEach((member, i) => {
+    const cfg = TIER_CONFIG[member.tier];
+    const fig = document.createElement('div');
+    fig.className = 'figure';
+    fig.style.animationDelay = (i * 0.12) + 's';
+
+    const short = member.wallet.substring(0,4)+'...'+member.wallet.slice(-4);
+    fig.innerHTML = `
+      <div class="fig-tooltip">
+        <div class="fig-wallet">${short}</div>
+        <div class="fig-amount">${formatAmount(member.amount)} $SHIP • ${cfg.label}</div>
+      </div>
+      <span class="fig-badge badge-${member.tier}">${member.tier.toUpperCase()}</span>
+      ${makeFigureSVG(member.tier, cfg.color)}
+    `;
+    deck.appendChild(fig);
+
+    if (member.tier === 'whale') whaleCount++;
+    totalHeld += member.amount;
+  });
+
+  document.getElementById('crew-count').textContent = DEMO_CREW.length;
+  document.getElementById('whale-count').textContent = whaleCount;
+  document.getElementById('total-held').textContent = formatAmount(totalHeld);
+}
+
+// Stars
+function makeStars() {
+  const svg = document.querySelector('.stars');
+  let html = '';
+  for (let i = 0; i < 80; i++) {
+    const x = Math.random()*100, y = Math.random()*60;
+    const r = Math.random()*1.2+0.3;
+    const op = Math.random()*0.6+0.2;
+    html += `<circle cx="${x}%" cy="${y}%" r="${r}" fill="white" opacity="${op}"/>`;
+  }
+  svg.innerHTML = html;
+}
+
+function copyCA() {
+  const ca = document.getElementById('ca-text').innerText;
+  if (ca.includes('TBA')) { alert('⚓ Contract dropping soon — all hands on deck!'); return; }
+  navigator.clipboard.writeText(ca).then(() => {
+    const b = document.querySelector('.cabtn');
+    b.textContent = '✓ Copied'; setTimeout(()=>b.textContent='Copy',2000);
+  });
+}
+
+window.addEventListener('load', () => {
+  makeStars();
+  setTimeout(buildCrew, 500);
+});
+</script>
+</body>
+</html>
