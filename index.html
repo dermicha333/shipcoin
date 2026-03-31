@@ -205,7 +205,7 @@
     .rl-hi { color:var(--gold); }
     .rl-sep { margin:0 22px; color:var(--border); }
 
-    /* ── CREW MANIFEST — THE MAIN FEATURE ── */
+    /* ── CREW MANIFEST — REAL SHIP ── */
     .crew-section {
       max-width:1200px; margin:0 auto; padding:80px 40px;
     }
@@ -224,71 +224,76 @@
       font-size:0.9rem; color:#445; margin-bottom:48px; line-height:1.7;
     }
 
-    /* SHIP CANVAS CONTAINER */
-    .ship-canvas-wrap {
+    /* ── REAL SHIP SCENE ── */
+    .ship-real-wrap {
       position:relative;
-      background:var(--card);
-      border:1px solid var(--border);
       border-radius:16px;
       overflow:hidden;
-      padding:0;
+      border:1px solid var(--border);
+      background:#0a1628;
+      box-shadow:0 20px 60px rgba(0,0,0,0.6);
     }
-    .ship-scene {
-      position:relative;
-      height:420px;
+    .ship-real-img {
+      width:100%; display:block;
+      border-radius:16px;
+      animation:shipRock 6s ease-in-out infinite;
     }
-
-    /* Sky */
-    .sky {
-      position:absolute; inset:0;
-      background:linear-gradient(180deg, #020810 0%, #050e20 40%, #071428 100%);
-    }
-    /* Stars */
-    .stars { position:absolute; inset:0; pointer-events:none; }
-
-    /* Ocean waves */
-    .ocean-layer {
-      position:absolute; bottom:0; left:0; right:0; height:160px;
-    }
-    .wave {
-      position:absolute; width:200%; height:100%;
-      background:linear-gradient(180deg, transparent, #061830 30%, #040e20 100%);
-      border-radius:40% 60% 0 0 / 20px 20px 0 0;
-    }
-    .wave1 { animation:waveMove 6s ease-in-out infinite; opacity:0.8; bottom:0; }
-    .wave2 { animation:waveMove 8s ease-in-out infinite reverse; opacity:0.5; bottom:10px; }
-    .wave3 { animation:waveMove 10s ease-in-out infinite; opacity:0.3; bottom:20px; }
-    @keyframes waveMove {
-      0%,100% { transform:translateX(0) scaleY(1); }
-      50%      { transform:translateX(-5%) scaleY(1.1); }
+    @keyframes shipRock {
+      0%,100%{ transform:translateY(0) rotate(0deg); }
+      25%    { transform:translateY(-4px) rotate(0.3deg); }
+      75%    { transform:translateY(4px) rotate(-0.3deg); }
     }
 
-    /* THE SHIP SVG */
-    .ship-svg-wrap {
+    /* Water shimmer canvas */
+    #water-canvas {
+      position:absolute; inset:0; pointer-events:none;
+      width:100%; height:100%; z-index:2;
+      border-radius:16px;
+    }
+
+    /* Upper deck overlay — where whales stand */
+    .deck-upper {
       position:absolute;
-      bottom:70px;
-      left:50%;
-      transform:translateX(-50%);
-      width:580px;
-      animation:shipBob 5s ease-in-out infinite;
-    }
-    @keyframes shipBob {
-      0%,100% { transform:translateX(-50%) translateY(0) rotate(-0.5deg); }
-      50%      { transform:translateX(-50%) translateY(-8px) rotate(0.5deg); }
+      /* Top open deck area of this ship */
+      top:38%; left:22%; right:8%;
+      height:22%;
+      display:flex; align-items:flex-end;
+      justify-content:space-around;
+      padding:0 10px;
+      z-index:5;
     }
 
-    /* CREW FIGURES on deck */
-    #crew-deck {
+    /* Lower galley — rowers */
+    .deck-lower {
       position:absolute;
-      bottom:152px; /* on the deck */
-      left:50%;
-      transform:translateX(-50%);
-      width:580px;
-      display:flex;
-      align-items:flex-end;
-      justify-content:center;
-      gap:6px;
-      z-index:10;
+      /* The lower cutaway/rowing section */
+      top:63%; left:18%; right:28%;
+      height:18%;
+      display:flex; align-items:flex-end;
+      justify-content:space-around;
+      padding:0 4px;
+      z-index:5;
+    }
+
+    /* Deck labels */
+    .deck-label {
+      position:absolute; z-index:6;
+      font-family:'Cinzel',serif;
+      font-size:0.6rem; letter-spacing:2px;
+      padding:3px 10px; border-radius:4px;
+      text-transform:uppercase; pointer-events:none;
+    }
+    .upper-label {
+      top:36%; left:22%;
+      background:rgba(201,168,76,0.15);
+      border:1px solid rgba(201,168,76,0.3);
+      color:var(--gold);
+    }
+    .lower-label {
+      top:61%; left:18%;
+      background:rgba(91,200,255,0.1);
+      border:1px solid rgba(91,200,255,0.25);
+      color:#5bc8ff;
     }
 
     /* Stick figure styles */
@@ -334,36 +339,29 @@
     .badge-fish   { background:#2a1a0a; color:var(--gold); }
     .badge-shrimp { background:#1a1a2a; color:#8888ff; }
 
-    /* Info bar below ship */
-    .crew-info {
+    /* Info bar */
+    .crew-info-bar {
       padding:20px 28px;
+      background:var(--card);
       border-top:1px solid var(--border);
-      display:flex; gap:32px; align-items:center; flex-wrap:wrap;
+      display:flex; gap:28px; align-items:center; flex-wrap:wrap;
     }
-    .ci-item { text-align:center; }
-    .ci-num {
-      font-family:'Cinzel',serif; font-size:1.4rem;
-      color:var(--gold); display:block;
-    }
-    .ci-lbl { font-size:0.65rem; color:#445; letter-spacing:2px; text-transform:uppercase; }
-    .ci-divider { flex:1; height:1px; background:var(--border); }
-
-    .join-cta {
-      display:flex; align-items:center; gap:14px;
-      margin-left:auto;
-    }
+    .cib-item { text-align:center; }
+    .cib-num { font-family:'Cinzel',serif; font-size:1.4rem; color:var(--gold); display:block; }
+    .cib-lbl { font-size:0.62rem; color:#445; letter-spacing:2px; text-transform:uppercase; }
+    .cib-divider { flex:1; height:1px; background:var(--border); }
+    .join-cta { display:flex; align-items:center; gap:14px; margin-left:auto; }
     .join-text { font-size:0.8rem; color:#445; }
     .join-text strong { color:var(--gold); }
 
     /* Legend */
     .crew-legend {
-      display:flex; gap:20px; flex-wrap:wrap; margin-top:24px;
+      display:flex; gap:20px; flex-wrap:wrap; margin-top:20px;
     }
     .legend-item {
       display:flex; align-items:center; gap:8px;
       font-size:0.75rem; color:#445;
     }
-    .legend-item svg { flex-shrink:0; }
 
     /* ── JOB LISTING ── */
     .job-section {
@@ -678,11 +676,50 @@
   <section class="crew-section" id="crew">
     <div class="section-label">⚓ Crew Manifest</div>
     <h2>Every Holder <em>On Board.</em></h2>
-    <p class="sub">Buy $SHIP → your wallet appears on deck as a crew member.<br/>
-    The more you hold, the bigger your figure. Whales get the biggest spots.</p>
+    <p class="sub">Buy $SHIP → your wallet appears on deck as crew.<br/>
+    Whales command the upper deck. Everyone else rows below.</p>
 
-    <div class="ship-canvas-wrap">
-      <div class="ship-scene">
+    <div class="ship-real-wrap">
+      <!-- Water shimmer canvas -->
+      <canvas id="water-canvas"></canvas>
+
+      <!-- THE REAL SHIP IMAGE -->
+      <img src="assets/ship-real.jpg" class="ship-real-img" alt="The Ship"/>
+
+      <!-- UPPER DECK — Whales (standing on the open deck) -->
+      <div class="deck-upper" id="upper-deck"></div>
+
+      <!-- LOWER DECK — Rowers (in the galley) -->
+      <div class="deck-lower" id="lower-deck"></div>
+
+      <!-- Labels -->
+      <div class="deck-label upper-label">🐋 Whale Deck</div>
+      <div class="deck-label lower-label">⚓ Crew Galley</div>
+    </div>
+
+    <!-- Info bar -->
+    <div class="crew-info-bar">
+      <div class="cib-item"><span class="cib-num" id="crew-count">0</span><span class="cib-lbl">Crew</span></div>
+      <div class="cib-item"><span class="cib-num" id="whale-count">0</span><span class="cib-lbl">Whales 🐋</span></div>
+      <div class="cib-item"><span class="cib-num" id="total-held">0</span><span class="cib-lbl">$SHIP Held</span></div>
+      <div class="cib-divider"></div>
+      <div class="join-cta">
+        <div class="join-text">Buy $SHIP → <strong>board the ship.</strong></div>
+        <a href="#join" class="btn-gold" style="padding:10px 20px;font-size:0.7rem;font-family:'Cinzel',serif;">⚓ Board Now</a>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="crew-legend">
+      <div class="legend-item"><span style="color:#5bc8ff;font-size:1.2rem">▲</span> Whale — biggest holders on upper deck</div>
+      <div class="legend-item"><span style="color:#5bff8a;font-size:1.2rem">▲</span> Shark — mid deck</div>
+      <div class="legend-item"><span style="color:#c9a84c;font-size:1.2rem">▲</span> Fish — rowing below</div>
+      <div class="legend-item"><span style="color:#8888ff;font-size:1.2rem">▲</span> Shrimp — in the galley</div>
+    </div>
+  </section>
+
+  <!-- HIDDEN OLD SCENE (kept for JS compat) -->
+  <div style="display:none"><div id="crew-deck"></div><div class="ship-scene">
         <!-- Sky -->
         <div class="sky">
           <svg class="stars" xmlns="http://www.w3.org/2000/svg">
@@ -759,48 +796,7 @@
         </div>
       </div>
 
-      <!-- Info bar -->
-      <div class="crew-info">
-        <div class="ci-item">
-          <span class="ci-num" id="crew-count">0</span>
-          <span class="ci-lbl">Crew Members</span>
-        </div>
-        <div class="ci-item">
-          <span class="ci-num" id="whale-count">0</span>
-          <span class="ci-lbl">Whales 🐋</span>
-        </div>
-        <div class="ci-item">
-          <span class="ci-num" id="total-held">0</span>
-          <span class="ci-lbl">$SHIP Held</span>
-        </div>
-        <div class="ci-divider"></div>
-        <div class="join-cta">
-          <div class="join-text">Want to appear on the ship?<br/><strong>Buy $SHIP and join the crew.</strong></div>
-          <a href="#join" class="btn-gold" style="padding:10px 20px;font-size:0.7rem;">⚓ Board Now</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Legend -->
-    <div class="crew-legend">
-      <div class="legend-item">
-        <svg width="20" height="28" viewBox="0 0 20 28"><circle cx="10" cy="5" r="4" fill="#5bc8ff" stroke="#5bc8ff"/><line x1="10" y1="9" x2="10" y2="20" stroke="#5bc8ff" stroke-width="2"/><line x1="4" y1="14" x2="16" y2="14" stroke="#5bc8ff" stroke-width="2"/><line x1="10" y1="20" x2="4" y2="28" stroke="#5bc8ff" stroke-width="2"/><line x1="10" y1="20" x2="16" y2="28" stroke="#5bc8ff" stroke-width="2"/></svg>
-        <span>Whale — Top 5% holders (biggest figures)</span>
-      </div>
-      <div class="legend-item">
-        <svg width="16" height="22" viewBox="0 0 16 22"><circle cx="8" cy="4" r="3" fill="#5bff8a" stroke="#5bff8a"/><line x1="8" y1="7" x2="8" y2="16" stroke="#5bff8a" stroke-width="1.8"/><line x1="3" y1="11" x2="13" y2="11" stroke="#5bff8a" stroke-width="1.8"/><line x1="8" y1="16" x2="3" y2="22" stroke="#5bff8a" stroke-width="1.8"/><line x1="8" y1="16" x2="13" y2="22" stroke="#5bff8a" stroke-width="1.8"/></svg>
-        <span>Shark — 1–5% holders</span>
-      </div>
-      <div class="legend-item">
-        <svg width="12" height="17" viewBox="0 0 12 17"><circle cx="6" cy="3" r="2.5" fill="#c9a84c" stroke="#c9a84c"/><line x1="6" y1="5.5" x2="6" y2="12" stroke="#c9a84c" stroke-width="1.5"/><line x1="2" y1="9" x2="10" y2="9" stroke="#c9a84c" stroke-width="1.5"/><line x1="6" y1="12" x2="2" y2="17" stroke="#c9a84c" stroke-width="1.5"/><line x1="6" y1="12" x2="10" y2="17" stroke="#c9a84c" stroke-width="1.5"/></svg>
-        <span>Fish — 0.1–1% holders</span>
-      </div>
-      <div class="legend-item">
-        <svg width="9" height="13" viewBox="0 0 9 13"><circle cx="4.5" cy="2" r="2" fill="#8888ff" stroke="#8888ff"/><line x1="4.5" y1="4" x2="4.5" y2="9" stroke="#8888ff" stroke-width="1.2"/><line x1="1" y1="6.5" x2="8" y2="6.5" stroke="#8888ff" stroke-width="1.2"/><line x1="4.5" y1="9" x2="1" y2="13" stroke="#8888ff" stroke-width="1.2"/><line x1="4.5" y1="9" x2="8" y2="13" stroke="#8888ff" stroke-width="1.2"/></svg>
-        <span>Shrimp — &lt;0.1% holders</span>
-      </div>
-    </div>
-  </section>
+    </div></div><!-- end hidden old scene -->
 
   <!-- JOB LISTING SECTION -->
   <section class="job-section" id="lore">
@@ -809,9 +805,10 @@
       <!-- Left: ship video/image -->
       <div class="job-media">
         <div class="job-video-frame">
-          <img src="assets/inspo.jpg" alt="Seeking Crew" style="width:100%;height:100%;object-fit:cover;opacity:0.7;"/>
-          <div class="job-video-overlay">
-            <div class="jvo-play">▶</div>
+          <div style="width:100%;height:100%;background:linear-gradient(135deg,#060d18,#0a1628);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;">
+            <div style="font-size:4rem;">⚓</div>
+            <div style="font-family:'Cinzel',serif;font-size:1rem;color:var(--gold);letter-spacing:4px;">SEEKING CREW</div>
+            <div style="font-size:0.7rem;color:#334;letter-spacing:3px;">30–50 REAL SAILORS</div>
           </div>
         </div>
       </div>
@@ -832,7 +829,7 @@
 
         <div class="job-pay-range">
           10x – 100x per voyage<br/>
-          <em>(...sofern wir den Schatz finden)</em>
+          <em>(...provided we find the treasure)</em>
         </div>
 
         <div class="job-divider"></div>
@@ -841,7 +838,7 @@
         <ul class="job-duties">
           <li>⚓ Sailing the seven seas on the hunt for treasure chests</li>
           <li>🥃 Regular consumption of rum while watching charts</li>
-          <li>🎵 Loud singing of shanties in the Telegram group</li>
+          <li>🎵 Loud singing of shanties in the X community</li>
           <li>💎 Holding $SHIP through all storms and bear markets</li>
           <li>🐋 Becoming the biggest whale on the manifest</li>
         </ul>
@@ -1008,28 +1005,63 @@ function formatAmount(n) {
   return n.toString();
 }
 
+function makeFigureSVGSmall(color, scale) {
+  const s = scale || 1;
+  const w = Math.round(18*s), h = Math.round(32*s);
+  return `<svg width="${w}" height="${h}" viewBox="0 0 18 32" fill="none">
+    <circle cx="9" cy="5" r="4" fill="${color}"/>
+    <line x1="9" y1="9" x2="9" y2="20" stroke="${color}" stroke-width="2"/>
+    <line x1="4" y1="13" x2="14" y2="13" stroke="${color}" stroke-width="2"/>
+    <line x1="9" y1="20" x2="4" y2="32" stroke="${color}" stroke-width="2"/>
+    <line x1="9" y1="20" x2="14" y2="32" stroke="${color}" stroke-width="2"/>
+  </svg>`;
+}
+
+function makeRowerSVG(color, scale) {
+  // Rower: leaning forward with oar
+  const s = scale || 1;
+  const w = Math.round(22*s), h = Math.round(26*s);
+  return `<svg width="${w}" height="${h}" viewBox="0 0 22 26" fill="none">
+    <circle cx="11" cy="4" r="3.5" fill="${color}"/>
+    <line x1="11" y1="7" x2="11" y2="17" stroke="${color}" stroke-width="1.8"/>
+    <line x1="5" y1="11" x2="17" y2="11" stroke="${color}" stroke-width="1.8"/>
+    <line x1="11" y1="17" x2="6" y2="26" stroke="${color}" stroke-width="1.8"/>
+    <line x1="11" y1="17" x2="16" y2="26" stroke="${color}" stroke-width="1.8"/>
+    <!-- oar -->
+    <line x1="3" y1="8" x2="18" y2="14" stroke="${color}" stroke-width="1.2" opacity="0.7"/>
+    <line x1="18" y1="14" x2="21" y2="18" stroke="${color}" stroke-width="2" opacity="0.7"/>
+  </svg>`;
+}
+
 function buildCrew() {
-  const deck = document.getElementById('crew-deck');
-  deck.innerHTML = '';
+  const upperDeck = document.getElementById('upper-deck');
+  const lowerDeck = document.getElementById('lower-deck');
+  if (!upperDeck || !lowerDeck) return;
+  upperDeck.innerHTML = ''; lowerDeck.innerHTML = '';
 
   let whaleCount = 0, totalHeld = 0;
 
   DEMO_CREW.forEach((member, i) => {
     const cfg = TIER_CONFIG[member.tier];
+    const isUpper = (member.tier === 'whale' || member.tier === 'shark');
+    const target = isUpper ? upperDeck : lowerDeck;
+
+    const scale = { whale:1.4, shark:1.0, fish:0.75, shrimp:0.55 }[member.tier];
     const fig = document.createElement('div');
     fig.className = 'figure';
-    fig.style.animationDelay = (i * 0.12) + 's';
+    fig.style.animationDelay = (i * 0.1) + 's';
+    fig.style.position = 'relative';
+    fig.style.cursor = 'pointer';
+    fig.style.animation = `figureIn 0.5s ease ${i*0.1}s both`;
 
     const short = member.wallet.substring(0,4)+'...'+member.wallet.slice(-4);
+    const svgFn = isUpper ? makeFigureSVGSmall : makeRowerSVG;
+
     fig.innerHTML = `
-      <div class="fig-tooltip">
-        <div class="fig-wallet">${short}</div>
-        <div class="fig-amount">${formatAmount(member.amount)} $SHIP • ${cfg.label}</div>
-      </div>
-      <span class="fig-badge badge-${member.tier}">${member.tier.toUpperCase()}</span>
-      ${makeFigureSVG(member.tier, cfg.color)}
+      <div class="fig-tooltip">${short}<br/><span style="color:${cfg.color}">${formatAmount(member.amount)} $SHIP</span></div>
+      ${svgFn(cfg.color, scale)}
     `;
-    deck.appendChild(fig);
+    target.appendChild(fig);
 
     if (member.tier === 'whale') whaleCount++;
     totalHeld += member.amount;
@@ -1040,18 +1072,52 @@ function buildCrew() {
   document.getElementById('total-held').textContent = formatAmount(totalHeld);
 }
 
-// Stars
-function makeStars() {
-  const svg = document.querySelector('.stars');
-  let html = '';
-  for (let i = 0; i < 80; i++) {
-    const x = Math.random()*100, y = Math.random()*60;
-    const r = Math.random()*1.2+0.3;
-    const op = Math.random()*0.6+0.2;
-    html += `<circle cx="${x}%" cy="${y}%" r="${r}" fill="white" opacity="${op}"/>`;
+// ── WATER RIPPLE CANVAS ──
+function initWater() {
+  const canvas = document.getElementById('water-canvas');
+  if (!canvas) return;
+  const wrap = canvas.parentElement;
+  canvas.width = wrap.offsetWidth;
+  canvas.height = wrap.offsetHeight;
+  const ctx = canvas.getContext('2d');
+  let t = 0;
+
+  function drawWater() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Only animate the water areas (top strip and sides around the ship)
+    // Horizontal shimmer lines
+    const waterColor = 'rgba(100,180,220,0.04)';
+    for (let y = 0; y < canvas.height; y += 8) {
+      const inShipArea = (y > canvas.height * 0.12 && y < canvas.height * 0.88 &&
+                          true);
+      ctx.beginPath();
+      for (let x = 0; x < canvas.width; x += 4) {
+        const wave = Math.sin(x * 0.025 + t + y * 0.015) * 2;
+        if (x === 0) ctx.moveTo(x, y + wave);
+        else ctx.lineTo(x, y + wave);
+      }
+      ctx.strokeStyle = waterColor;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+    // Subtle highlight sparkles on water
+    for (let i = 0; i < 8; i++) {
+      const sx = (Math.sin(t * 0.7 + i * 2.1) * 0.3 + 0.5) * canvas.width * 0.4;
+      const sy = (Math.sin(t * 0.5 + i * 1.7) * 0.1 + 0.08) * canvas.height;
+      const alpha = (Math.sin(t * 2 + i) + 1) * 0.04;
+      ctx.beginPath();
+      ctx.arc(sx, sy, 2 + Math.sin(t + i) * 1, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(150,210,255,${alpha})`;
+      ctx.fill();
+    }
+    t += 0.015;
+    requestAnimationFrame(drawWater);
   }
-  svg.innerHTML = html;
+  drawWater();
 }
+
+// Stars (legacy, not shown now)
+function makeStars() {}
 
 function copyCA() {
   const ca = document.getElementById('ca-text').innerText;
@@ -1063,8 +1129,10 @@ function copyCA() {
 }
 
 window.addEventListener('load', () => {
-  makeStars();
-  setTimeout(buildCrew, 500);
+  setTimeout(() => {
+    buildCrew();
+    initWater();
+  }, 600);
 });
 </script>
 </body>
