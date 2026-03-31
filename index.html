@@ -365,6 +365,108 @@
     }
     .legend-item svg { flex-shrink:0; }
 
+    /* ── JOB LISTING ── */
+    .job-section {
+      max-width:1200px; margin:0 auto;
+      padding:80px 40px;
+      border-top:1px solid var(--border);
+    }
+    .job-inner {
+      display:grid; grid-template-columns:1fr 1.1fr;
+      gap:50px; align-items:start;
+    }
+    .job-media { position:sticky; top:100px; }
+    .job-video-frame {
+      border-radius:12px; overflow:hidden;
+      border:1px solid var(--border);
+      aspect-ratio:9/16; max-height:520px;
+      position:relative; background:#000;
+    }
+    .job-video-overlay {
+      position:absolute; inset:0;
+      display:flex; align-items:flex-start;
+      justify-content:flex-start;
+      padding:14px;
+    }
+    .jvo-play {
+      width:38px; height:38px;
+      background:rgba(255,255,255,0.15);
+      border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-size:0.9rem; cursor:pointer;
+      backdrop-filter:blur(4px);
+    }
+
+    /* The listing card */
+    .job-listing {
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:36px;
+      position:relative;
+    }
+    .job-platform {
+      display:flex; align-items:center; gap:8px;
+      font-size:0.65rem; letter-spacing:2px; color:#445;
+      text-transform:uppercase; margin-bottom:20px;
+    }
+    .jp-dot { width:6px; height:6px; background:var(--teal); border-radius:50%; }
+
+    .job-title {
+      font-family:'Cinzel',serif;
+      font-size:clamp(1.4rem,3vw,2.2rem);
+      letter-spacing:2px; color:#fff;
+      line-height:1.2; margin-bottom:20px;
+    }
+
+    .job-salary {
+      display:flex; align-items:baseline; gap:12px;
+      margin-bottom:6px;
+    }
+    .salary-num {
+      font-family:'Cinzel',serif;
+      font-size:2.4rem; color:var(--gold);
+      letter-spacing:2px;
+    }
+    .salary-note { font-size:0.8rem; color:#445; }
+
+    .job-pay-range {
+      font-size:0.88rem; color:#557;
+      margin-bottom:24px; line-height:1.7;
+    }
+    .job-pay-range em { color:#445; font-style:italic; }
+
+    .job-divider {
+      height:1px; background:var(--border);
+      margin:22px 0;
+    }
+    .job-label {
+      font-size:0.72rem; letter-spacing:3px; color:var(--teal);
+      text-transform:uppercase; margin-bottom:14px;
+      font-family:'Cinzel',serif;
+    }
+    .job-duties, .job-reqs {
+      list-style:none; display:flex; flex-direction:column; gap:10px;
+      margin-bottom:0;
+    }
+    .job-duties li, .job-reqs li {
+      font-size:0.88rem; color:#778;
+      line-height:1.6; padding-left:4px;
+    }
+    .job-apply-btn {
+      display:block; margin-top:28px;
+      background:var(--gold); color:#000;
+      font-family:'Cinzel',serif; font-weight:700;
+      font-size:0.78rem; padding:16px 24px;
+      border-radius:6px; text-decoration:none;
+      letter-spacing:2px; text-align:center;
+      transition:transform 0.2s, box-shadow 0.2s;
+    }
+    .job-apply-btn:hover {
+      transform:translateY(-2px);
+      box-shadow:0 0 24px rgba(201,168,76,0.4);
+    }
+
     /* ── LORE ── */
     .lore-wrap {
       max-width:1100px; margin:0 auto;
@@ -468,6 +570,9 @@
     @media(max-width:900px){
       nav { padding:16px 20px; }
       .nav-links { display:none; }
+      .job-inner { grid-template-columns:1fr; }
+      .job-media { position:static; }
+      .job-section { padding:60px 20px; }
       .lore-wrap { grid-template-columns:1fr; padding:0 20px 60px; }
       .stats { grid-template-columns:repeat(2,1fr); }
       .htj { padding:60px 20px; }
@@ -697,8 +802,68 @@
     </div>
   </section>
 
-  <!-- LORE -->
-  <section class="lore-wrap" id="lore">
+  <!-- JOB LISTING SECTION -->
+  <section class="job-section" id="lore">
+    <div class="job-inner">
+
+      <!-- Left: ship video/image -->
+      <div class="job-media">
+        <div class="job-video-frame">
+          <img src="assets/inspo.jpg" alt="Seeking Crew" style="width:100%;height:100%;object-fit:cover;opacity:0.7;"/>
+          <div class="job-video-overlay">
+            <div class="jvo-play">▶</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: the job listing -->
+      <div class="job-listing">
+        <div class="job-platform">
+          <span class="jp-dot"></span>
+          indeed.com — Featured Listing
+        </div>
+
+        <h2 class="job-title">Seeking Crew,<br/>30–50 Real Sailors</h2>
+
+        <div class="job-salary">
+          <span class="salary-num">100x</span>
+          <span class="salary-note">+ moon if we find the treasure</span>
+        </div>
+
+        <div class="job-pay-range">
+          10x – 100x per voyage<br/>
+          <em>(...sofern wir den Schatz finden)</em>
+        </div>
+
+        <div class="job-divider"></div>
+
+        <div class="job-label">Tätigkeiten / Activities:</div>
+        <ul class="job-duties">
+          <li>⚓ Sailing the seven seas on the hunt for treasure chests</li>
+          <li>🥃 Regular consumption of rum while watching charts</li>
+          <li>🎵 Loud singing of shanties in the Telegram group</li>
+          <li>💎 Holding $SHIP through all storms and bear markets</li>
+          <li>🐋 Becoming the biggest whale on the manifest</li>
+        </ul>
+
+        <div class="job-divider"></div>
+
+        <div class="job-label">Requirements:</div>
+        <ul class="job-reqs">
+          <li>✅ Phantom wallet + some SOL</li>
+          <li>✅ No paper hands</li>
+          <li>✅ Ability to hold through FUD</li>
+          <li>✅ Willingness to recruit more crew</li>
+        </ul>
+
+        <a href="#join" class="job-apply-btn">⚓ Apply Now — Board the Ship</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- OLD LORE now as simple manifesto -->
+  <section class="lore-wrap" id="lore2">
     <div class="lore-left">
       <div class="section-label">📜 The Manifest</div>
       <h2>A ship is nothing<br/>without its <em>crew.</em></h2>
